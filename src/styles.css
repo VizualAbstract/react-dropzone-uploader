@@ -89,10 +89,10 @@
 }
 
 .dzu-previewFileName {
-  font-family: 'Helvetica', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  color: #333333;
+  color: white;
 }
 
 .dzu-previewImage {
