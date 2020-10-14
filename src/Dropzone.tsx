@@ -319,7 +319,7 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
 
   handleChangeStatus = (fileWithMeta: IFileWithMeta) => {
     if (!this.props.onChangeStatus) return
-    const { meta = {} } = this.props.onChangeStatus(fileWithMeta, fileWithMeta.meta.status, this.files) || {}
+    const { meta = null } = this.props.onChangeStatus(fileWithMeta, fileWithMeta.meta.status, this.files) || {}
     if (meta) {
       delete meta.status
       fileWithMeta.meta = { ...fileWithMeta.meta, ...meta }
