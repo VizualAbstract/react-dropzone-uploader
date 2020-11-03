@@ -6,13 +6,13 @@ import InputDefault from './Input'
 import PreviewDefault from './Preview'
 import SubmitButtonDefault from './SubmitButton'
 import {
+  accepts,
+  defaultClassNames,
   formatBytes,
   formatDuration,
-  accepts,
-  resolveValue,
-  mergeStyles,
-  defaultClassNames,
   getFilesFromEvent as defaultGetFilesFromEvent,
+  mergeStyles,
+  resolveValue,
 } from './utils'
 
 export type StatusValue =
@@ -115,8 +115,11 @@ export interface IStyleCustomization<T> {
 
 export interface IExtraLayout extends IExtra {
   onFiles(files: File[]): void
+
   onCancelFile(file: IFileWithMeta): void
+
   onRemoveFile(file: IFileWithMeta): void
+
   onRestartFile(file: IFileWithMeta): void
 }
 
@@ -184,56 +187,49 @@ export interface ISubmitButtonProps extends ICommonProps {
 type ReactComponent<Props> = (props: Props) => React.ReactNode | React.Component<Props>
 
 export interface IDropzoneProps {
-  onChangeStatus?(
-    file: IFileWithMeta,
-    status: StatusValue,
-    allFiles: IFileWithMeta[],
-  ): { meta: { [name: string]: any } } | void
-  getUploadParams?(file: IFileWithMeta): IUploadParams | Promise<IUploadParams>
-  onSubmit?(successFiles: IFileWithMeta[], allFiles: IFileWithMeta[]): void
-
   getFilesFromEvent?: (
     event: React.DragEvent<HTMLElement> | React.ChangeEvent<HTMLInputElement>,
   ) => Promise<File[]> | File[]
   getDataTransferItemsFromEvent?: (
     event: React.DragEvent<HTMLElement>,
   ) => Promise<DataTransferItem[]> | DataTransferItem[]
-
   accept: string
   multiple: boolean
   minSizeBytes: number
   maxSizeBytes: number
   maxFiles: number
-
-  validate?(file: IFileWithMeta): any // usually a string, but can be anything
-
   autoUpload: boolean
   timeout?: number
-
   initialFiles?: File[]
-
   /* component customization */
   disabled: boolean | CustomizationFunction<boolean>
-
   canCancel: boolean | CustomizationFunction<boolean>
   canRemove: boolean | CustomizationFunction<boolean>
   canRestart: boolean | CustomizationFunction<boolean>
-
   inputContent: React.ReactNode | CustomizationFunction<React.ReactNode>
   inputWithFilesContent: React.ReactNode | CustomizationFunction<React.ReactNode>
-
   submitButtonDisabled: boolean | CustomizationFunction<boolean>
   submitButtonContent: React.ReactNode | CustomizationFunction<React.ReactNode>
-
   classNames: IStyleCustomization<string>
   styles: IStyleCustomization<React.CSSProperties>
   addClassNames: IStyleCustomization<string>
-
   /* component injection */
   LayoutComponent?: ReactComponent<ILayoutProps>
   PreviewComponent?: ReactComponent<IPreviewProps>
   InputComponent?: ReactComponent<IInputProps>
   SubmitButtonComponent?: ReactComponent<ISubmitButtonProps>
+
+  onChangeStatus?(
+    file: IFileWithMeta,
+    status: StatusValue,
+    allFiles: IFileWithMeta[],
+  ): { meta: { [name: string]: any } } | void
+
+  getUploadParams?(file: IFileWithMeta): IUploadParams | Promise<IUploadParams>
+
+  onSubmit?(successFiles: IFileWithMeta[], allFiles: IFileWithMeta[]): void
+
+  validate?(file: IFileWithMeta): any // usually a string, but can be anything
 }
 
 class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragged: (File | DataTransferItem)[] }> {
@@ -563,6 +559,19 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
     this.forceUpdate()
   }
 
+  is_rejected = (dragged: (File)[]) => {
+    const { minSizeBytes, maxSizeBytes, maxFiles, accept } = this.props // TODO use validate
+    return (
+      dragged.some(
+        file =>
+          (file.type !== 'application/x-moz-file' && !accepts(file as File, accept) && file.size < minSizeBytes) ||
+          file.size > maxSizeBytes,
+      ) && this.files.length >= maxFiles
+    )
+
+    //  && validate(file as File)
+  }
+
   render() {
     const {
       accept,
@@ -591,7 +600,8 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
 
     const { active, dragged } = this.state
 
-    const reject = dragged.some(file => file.type !== 'application/x-moz-file' && !accepts(file as File, accept))
+    const reject = this.is_rejected(dragged as File[])
+    // const reject = dragged.some(file => file.type !== 'application/x-moz-file' && !accepts(file as File, accept))
     const extra = { active, reject, dragged, accept, multiple, minSizeBytes, maxSizeBytes, maxFiles } as IExtra
     const files = [...this.files]
     const dropzoneDisabled = resolveValue(disabled, files, extra)
