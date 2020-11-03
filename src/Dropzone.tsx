@@ -563,6 +563,13 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
     this.forceUpdate()
   }
 
+   is_rejected = (dragged: (File)[]) => {
+    const { minSizeBytes, maxSizeBytes, maxFiles, accept} = this.props // TODO use validate
+    return dragged.some(file => file.type !== 'application/x-moz-file' && !accepts(file as File, accept) && file.size < minSizeBytes || file.size > maxSizeBytes) && this.files.length >= maxFiles
+
+//  && validate(file as File)
+   }
+
   render() {
     const {
       accept,
@@ -591,7 +598,8 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
 
     const { active, dragged } = this.state
 
-    const reject = dragged.some(file => file.type !== 'application/x-moz-file' && !accepts(file as File, accept))
+    const reject = this.is_rejected(dragged as File[])
+    // const reject = dragged.some(file => file.type !== 'application/x-moz-file' && !accepts(file as File, accept))
     const extra = { active, reject, dragged, accept, multiple, minSizeBytes, maxSizeBytes, maxFiles } as IExtra
     const files = [...this.files]
     const dropzoneDisabled = resolveValue(disabled, files, extra)
