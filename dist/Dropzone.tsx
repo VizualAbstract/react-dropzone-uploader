@@ -519,11 +519,13 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
     xhr.open(method, url, true)
 
     for (const field in fields) {
-      formData.append(field, fields[field] ? fields[field] : '')
+      // @ts-ignore
+      formData.append(field, fields[field])
     }
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     for (const header in headers) {
-      xhr.setRequestHeader(header, headers[header] ? headers[header] : '')
+      // @ts-ignore
+      xhr.setRequestHeader(header, headers[header])
     }
     fileWithMeta.meta = { ...fileWithMeta.meta, ...extraMeta }
 
