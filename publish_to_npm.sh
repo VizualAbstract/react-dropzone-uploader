@@ -4,4 +4,4 @@ git commit -a -m "Building release and prettier"
 git push origin master
 npm version minor
 git push origin master
-npm publish
+npm publish --access public
