@@ -1,6 +1,6 @@
 {
   "name": "@vizualabstract/react-dropzone-uploader",
-  "version": "2.19.1",
+  "version": "2.20.0",
   "author": "Corey M. Capetillo <corey.capetillo@gmail.com>",
   "description": "React file dropzone and uploader: fully customizable, progress indicators, upload cancellation and restart, zero deps and excellent TypeScript support",
   "main": "./dist/react-dropzone-uploader.js",
