@@ -522,7 +522,7 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
       // @ts-ignore
       formData.append(field, fields[field])
     }
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+    // xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
     for (const header in headers) {
       // @ts-ignore
       xhr.setRequestHeader(header, headers[header])
