@@ -501,7 +501,7 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
 
     let params: IUploadParams | null = null
 
-    params = await getUploadParams(fileWithMeta) ?? null
+    params = (await getUploadParams(fileWithMeta)) || null
 
     if (params === null) return
 
