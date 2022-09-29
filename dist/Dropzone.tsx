@@ -232,7 +232,7 @@ export interface IDropzoneProps {
   /* component injection */
   LayoutComponent?: ReactComponent<ILayoutProps>
   PreviewComponent?: ReactComponent<IPreviewProps>
-  InputComponent?: ReactComponent<IInputProps>
+  InputComponent?: ReactComponent<IInputProps> | null
   SubmitButtonComponent?: ReactComponent<ISubmitButtonProps>
 }
 
@@ -496,18 +496,17 @@ class Dropzone extends React.Component<IDropzoneProps, { active: boolean; dragge
 
   uploadFile = async (fileWithMeta: IFileWithMeta) => {
     const { getUploadParams } = this.props
+
     if (!getUploadParams) return
+
     let params: IUploadParams | null = null
-    try {
-      params = await getUploadParams(fileWithMeta)
-    } catch (e) {
-      const eWithStack = e as { stack: string };
-      if (eWithStack) {
-        console.error('Error Upload Params', eWithStack.stack)
-      }
-    }
+
+    params = await getUploadParams(fileWithMeta) ?? null
+
     if (params === null) return
+
     const { url, method = 'POST', body, fields = {}, headers = {}, meta: extraMeta = {} } = params
+
     delete extraMeta.status
 
     if (!url) {

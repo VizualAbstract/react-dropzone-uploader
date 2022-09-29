@@ -46,12 +46,12 @@ const Standard = () => {
 }
 
 const ImageAudioVideo = () => {
-  const getUploadParams = ({ meta }) => {
+  const getUploadParams = ({ meta }: { meta: { name: string } }) => {
     const url = 'https://httpbin.org/post'
     return { url, meta: { fileUrl: `${url}/${encodeURIComponent(meta.name)}` } }
   }
 
-  const handleChangeStatus = ({ meta }, status) => {
+  const handleChangeStatus = ({ meta }: { [key: string]: any }, status: string) => {
     console.log(status, meta)
   }
 
